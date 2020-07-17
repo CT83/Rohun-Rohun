@@ -20,7 +20,19 @@ class Listener extends Component {
     }
     resultCallback = (voiceInput) => {
         // send info to brain
-        console.log(voiceInput);
+        console.log(JSON.stringify(voiceInput));
+
+        fetch('https://localhost:6969', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(voiceInput),
+        }).then(response => response.json()).then(data => {
+            console.log('Success:', data);
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
     }
 
     render() {
