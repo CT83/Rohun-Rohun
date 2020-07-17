@@ -1,68 +1,183 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# React application with Express server
 
-## Available Scripts
+This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app). Then an Express server was added in the `server` directory. The server is proxied via the `proxy` key in `package.json`.
 
-In the project directory, you can run:
+This branch provides endpoints with basic [Access Tokens](https://www.twilio.com/docs/iam/access-tokens) for [Twilio Programmable Chat](https://www.twilio.com/docs/chat) and [Twilio Programmable Video](https://www.twilio.com/docs/video). You can use the project as a base for building React chat or video applications.
 
-### `yarn start`
+## Using this project
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Clone the project, change into the directory and install the dependencies.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+```bash
+git clone https://github.com/philnash/react-express-starter.git
+cd react-express-starter
+npm install
+```
 
-### `yarn test`
+Copy the `.env.example` file to `.env` and fill in with your Twilio credentials.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+You can start the server on its own with the command:
 
-### `yarn build`
+```bash
+npm run server
+```
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Run the React application on its own with the command:
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+```bash
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Run both applications together with the command:
 
-### `yarn eject`
+```bash
+npm run dev
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+The React application will run on port 3000 and the server port 3001.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Access token endpoints
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+There are three access token endpoints available via `GET` or `POST`. In all cases the token will be returned as a JSON response with one key: "token".
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Chat
 
-## Learn More
+You can get a chat token by making a `GET` request to `/chat/token` passing an identity as a query parameter.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+e.g.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```javascript
+fetch('/chat/token?identity=philnash')
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
 
-### Code Splitting
+You can also get a chat token by making a `POST` request to `/chat/token` passing the identity as a body parameter or as JSON.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+e.g.
 
-### Analyzing the Bundle Size
+```javascript
+// Form encoded
+fetch('/chat/token', {
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  method: 'POST',
+  body: 'identity=philnash'
+})
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+```javascript
+// JSON encoded
+fetch('/chat/token', {
+  headers: { 'Content-Type': 'application/json' },
+  method: 'POST',
+  body: JSON.stringify({ identity: 'philnash' })
+})
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
 
-### Making a Progressive Web App
+### Video
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+You can get a video token by making a `GET` request to `/video/token` passing an identity as a query parameter.
 
-### Advanced Configuration
+e.g.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+```javascript
+fetch('/video/token?identity=philnash')
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
 
-### Deployment
+You can also pass a room parameter to limit the token's access to that room.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+```javascript
+fetch('/video/token?identity=philnash&room=burgundy')
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
 
-### `yarn build` fails to minify
+You can also get a video token by making a `POST` request to `/video/token` passing the identity as a body parameter or as JSON.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+e.g.
+
+```javascript
+// Form encoded
+fetch('/video/token', {
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  method: 'POST',
+  body: 'identity=philnash&room=burgundy'
+})
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
+
+```javascript
+// JSON encoded
+fetch('/video/token', {
+  headers: { 'Content-Type': 'application/json' },
+  method: 'POST',
+  body: JSON.stringify({ identity: 'philnash', room: 'burgundy' })
+})
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
+
+### Voice
+
+You can get a voice token by making a `GET` request to `/voice/token` passing an identity as a query parameter.
+
+e.g.
+
+```javascript
+fetch('/voice/token?identity=philnash')
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
+
+You can also get a voice token by making a `POST` request to `/voice/token` passing the identity as a body parameter or as JSON.
+
+e.g.
+
+```javascript
+// Form encoded
+fetch('/voice/token', {
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  method: 'POST',
+  body: 'identity=philnash'
+})
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
+
+```javascript
+// JSON encoded
+fetch('/voice/token', {
+  headers: { 'Content-Type': 'application/json' },
+  method: 'POST',
+  body: JSON.stringify({ identity: 'philnash' })
+})
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.token);
+  });
+```
