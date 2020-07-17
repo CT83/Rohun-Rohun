@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import VideoChat from './VideoChat';
+import Listener from './Listener';
 
 
 const App = () => {
@@ -10,18 +10,20 @@ const App = () => {
         <h1>🦇 The Listener</h1>
       </header>
       <main>
-        <VideoChat />
+
+        <Listener/>
+
       </main>
-      <footer>
-        <p>
-          Made with{' '}
-          <span role="img" aria-label="React">
-            ⚛
+    <footer>
+      <p>
+        Made with{' '}
+        <span role="img" aria-label="React">
+          ⚛
           </span>{' '}
           by <a href="https://twitter.com/_Rohan_Sawant_">Rohan Sawant</a>
-        </p>
-      </footer>
-    </div>
+      </p>
+    </footer>
+    </div >
   );
 };
 
