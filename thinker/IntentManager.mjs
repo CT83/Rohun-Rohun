@@ -1,9 +1,10 @@
-require('dotenv').config()
-const dialogflow = require('dialogflow');
+import dotenv from 'dotenv'
+dotenv.config()
+import dialogflow from "dialogflow";
 
 // Instantiates a session client
 
-class IntentManager {
+export class IntentManager {
     projectId = null;
 
     constructor(_projectId) {
@@ -91,5 +92,5 @@ class IntentManager {
     }
 }
 
-im = new IntentManager(process.env.PROJECT_ID);
-im.getResponse("Hello, can you hear me?");
+// im = new IntentManager(process.env.PROJECT_ID);
+// im.getResponse("Hello, can you hear me?");
