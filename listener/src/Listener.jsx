@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {Component} from 'react';
 import annyang from './Annyang'
 
 class Listener extends Component {
@@ -11,10 +11,12 @@ class Listener extends Component {
             voiceStatus: annyang.isSupported() ? 'Supported' : 'Unsupported'
         })
     }
+
     // 3
     componentWillUnmount() {
         annyang.abort()
     }
+
     engineCallback = (status) => {
         // Set engine status
     }
@@ -22,7 +24,7 @@ class Listener extends Component {
         // send info to brain
         console.log(JSON.stringify(voiceInput));
 
-        fetch('https://localhost:6969', {
+        fetch('http://localhost:6969/listen', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -37,7 +39,7 @@ class Listener extends Component {
 
     render() {
         return (
-            <div style={{ textAlign: "center", paddingTop: "50px" }}>
+            <div style={{textAlign: "center", paddingTop: "50px"}}>
                 <h2>I am listening to everything!👂🏼</h2>
             </div>
 

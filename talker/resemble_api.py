@@ -48,5 +48,4 @@ if __name__ == "__main__":
     url = "https://app.resemble.ai/projects/b861ed59-default/clips/bee57cd3-/edit"
     res = Resemble(os.environ['RES_AI_EMAIL'], os.environ['RES_AI_PASS'], proj_url=url)
     res.speak("This is sample text")
-    time.sleep(3)
-    res.speak("This is sample text")
+    time.sleep(5)
