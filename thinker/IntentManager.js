@@ -1,83 +1,95 @@
-// class IntentManager {
-
-
-
-// }
-
+require('dotenv').config()
 const dialogflow = require('dialogflow');
 
 // Instantiates a session client
-const sessionClient = new dialogflow.SessionsClient();
 
-async function detectIntent(
-    projectId,
-    sessionId,
-    query,
-    contexts,
-    languageCode
-) {
-    // The path to identify the agent that owns the created intent.
-    const sessionPath = sessionClient.sessionPath(
-        projectId,
-        sessionId
-    );
+class IntentManager {
+    projectId = null;
 
-    // The text query request.
-    const request = {
-        session: sessionPath,
-        queryInput: {
-            text: {
-                text: query,
-                languageCode: languageCode,
-            },
-        },
-    };
-
-    if (contexts && contexts.length > 0) {
-        request.queryParams = {
-            contexts: contexts,
-        };
+    constructor(_projectId) {
+        this.projectId = _projectId;
     }
 
-    const responses = await sessionClient.detectIntent(request);
-    return responses[0];
-}
+    async _detectIntent(
+        projectId,
+        sessionId,
+        query,
+        languageCode
+    ) {
+        var sessionClient = new dialogflow.SessionsClient();
+        const sessionPath = sessionClient.sessionPath(
+            projectId,
+            "12345"
+        );
 
-async function executeQueries(projectId, sessionId, queries, languageCode) {
-    // Keeping the context across queries let's us simulate an ongoing conversation with the bot
-    let context;
-    let intentResponse;
-    for (const query of queries) {
+        // The text query request.
+        const request = {
+            session: sessionPath,
+            queryInput: {
+                text: {
+                    text: query,
+                    languageCode: languageCode,
+                },
+            },
+        };
+
+        const responses = await sessionClient.detectIntent(request);
+        return responses[0];
+    }
+
+    async executeQueries(projectId, sessionId, queries, languageCode) {
+        // Keeping the context across queries let's us simulate an ongoing conversation with the bot
+        let context;
+        let intentResponse;
+        for (const query of queries) {
+            try {
+                console.log(`Sending Query: ${query}`);
+                intentResponse = this._detectIntent(
+                    projectId,
+                    sessionId,
+                    query,
+                    context,
+                    languageCode
+                );
+                console.log('Detected intent');
+                console.log(intentResponse);
+                console.log(
+                    `Fulfillment Text: ${intentResponse.queryResult.fulfillmentText}`
+                );
+                // Use the context from this response for next queries
+                context = intentResponse.queryResult.outputContexts;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
+    getResponse(query) {
+        var sessionId = '123456';
+
+        // languageCode: Indicates the language Dialogflow agent should use to detect intents
+        var languageCode = 'en';
+        let context;
+        let intentResponse;
         try {
             console.log(`Sending Query: ${query}`);
-            intentResponse = await detectIntent(
-                projectId,
+            intentResponse = this._detectIntent(
+                this.projectId,
                 sessionId,
                 query,
-                context,
                 languageCode
-            );
-            console.log('Detected intent');
-            console.log(
-                `Fulfillment Text: ${intentResponse.queryResult.fulfillmentText}`
-            );
-            // Use the context from this response for next queries
-            context = intentResponse.queryResult.outputContexts;
+            ).then((intentResponse) => {
+                console.log('Detected intent');
+                console.log(
+                    `Fulfillment Text: ${intentResponse.queryResult.fulfillmentText}`
+                );
+            });
         } catch (error) {
             console.log(error);
         }
+
     }
 }
 
-// projectId: ID of the GCP project where Dialogflow agent is deployed
-const projectId = 'rohun-rohun';
-// sessionId: String representing a random number or hashed user identifier
-const sessionId = '123456';
-// queries: A set of sequential queries to be send to Dialogflow agent for Intent Detection
-const queries = [
-    'Can you hear me?'
-]
-// languageCode: Indicates the language Dialogflow agent should use to detect intents
-const languageCode = 'en';
-
-executeQueries(projectId, sessionId, queries, languageCode);
+im = new IntentManager(process.env.PROJECT_ID);
+im.getResponse("Hello, can you hear me?");
