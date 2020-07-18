@@ -1,17 +1,13 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import fetch from "node-fetch";
+
 dotenv.config()
 
-// var express = require('express');
-// const bodyParser = require("body-parser");
-// var cors = require('cors');
-// require('dotenv').config()
 var app = express();
 import { IntentManager } from "./IntentManager.mjs";
-// require("./IntentManager.js")
-// import './IntentManager.js'
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -27,8 +23,21 @@ app.get('/', function (req, res) {
 app.post('/listen', function (req, res) {
     console.log(req.body);
     var input = req.body[0];
-    im.getResponse(input);
-    res.send({ "msg": "Success" });
+    var text = im.getResponse(input).then(text => {
+        fetch('http://localhost:5000/speak', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text }),
+        }).then(response => response.json()).then(data => {
+            console.log('Success:', data);
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+
+        res.send({ "msg": "Success" });
+    });
 });
 
 // Listen

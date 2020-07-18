@@ -67,13 +67,10 @@ export class IntentManager {
 
     getResponse(query) {
         var sessionId = '123456';
-
-        // languageCode: Indicates the language Dialogflow agent should use to detect intents
         var languageCode = 'en';
-        let context;
         let intentResponse;
-        try {
-            console.log(`Sending Query: ${query}`);
+        console.log(`Sending Query: ${query}`);
+        return new Promise((resolve, reject) => {
             intentResponse = this._detectIntent(
                 this.projectId,
                 sessionId,
@@ -81,15 +78,14 @@ export class IntentManager {
                 languageCode
             ).then((intentResponse) => {
                 console.log('Detected intent');
-                console.log(
-                    `Fulfillment Text: ${intentResponse.queryResult.fulfillmentText}`
-                );
+                var resp = intentResponse.queryResult.fulfillmentText
+                console.log(`Fulfillment Text: ${resp}`);
+                resolve(resp);
             });
-        } catch (error) {
-            console.log(error);
-        }
+        })
 
     }
+
 }
 
 // im = new IntentManager(process.env.PROJECT_ID);
