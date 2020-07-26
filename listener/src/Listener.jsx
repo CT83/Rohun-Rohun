@@ -1,7 +1,15 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import annyang from './Annyang'
 
 class Listener extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            voiceInput: '-'
+        }
+    }
 
     componentDidMount() {
         annyang.addCommands(this.reset, this.change, this.undo)
@@ -22,7 +30,9 @@ class Listener extends Component {
     }
     resultCallback = (voiceInput) => {
         // send info to brain
-        console.log(JSON.stringify(voiceInput));
+
+        this.setState({ voiceInput })
+        console.log(JSON.stringify(voiceInput[0]));
 
         fetch('http://localhost:6969/listen', {
             method: 'POST',
@@ -39,8 +49,9 @@ class Listener extends Component {
 
     render() {
         return (
-            <div style={{textAlign: "center", paddingTop: "50px"}}>
+            <div style={{ textAlign: "center", paddingTop: "50px" }}>
                 <h2>I am listening to everything!👂🏼</h2>
+                {this.state.voiceInput[0]}
             </div>
 
         );
